@@ -1,0 +1,39 @@
+version: '3'
+services:
+  php:
+    build: ./php
+    ports:
+    #Il seguente comando fa un forward delle porte 80 e 443 del container
+    #sulle porte 8080 e 8443 dell' host
+      - "8080:80"
+      - "8443:443"
+    expose:
+      - "8080"
+    volumes:
+      #il seguente step permette di montare la cartella public della cartella del nostro progetto
+      #sulla #/var/www/html del container
+    - ./php/htdocs/miosito/public:/var/www/html
+    - logvolume01:/var/log
+  mysql:
+    build: ./mysql
+    ports: 
+      - "3306:3306"
+    
+    environment:
+      #in questo step creo il db e un utente, inoltre assegno la password all' utente root
+      MYSQL_DATABASE: 'todo'
+      
+      MYSQL_USER: 'todouser'
+      
+      MYSQL_PASSWORD: '1234'
+      
+      MYSQL_ROOT_PASSWORD: '1234'
+    expose: 
+      - '3306'
+    volumes:
+      - ./mysql/initdb:/docker-entrypoint-initdb.d
+      
+      - logvolume01:/var/log
+volumes:
+  logvolume01: {}
+  logvolume02: {}
